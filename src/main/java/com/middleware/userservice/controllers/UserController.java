@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 class UserController {
 
   private final UserRepository repository;
+  private volatile String message;
 
   UserController(UserRepository repository) {
     this.repository = repository;
@@ -33,15 +34,21 @@ class UserController {
   @PostMapping("/user")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   String createUser(@RequestBody User newUser) {
+    message = "";
     if (!newUser.containsRequired()) {
-      throw new UserNotValidException(newUser.getEmail());
+      throw new UserNotCreatedException(newUser.getEmail(), "missing required fields");
     }
+    repository.findById(newUser.getEmail())
+    .map(user -> {
+      throw new UserNotCreatedException(newUser.getEmail(), "user already exists");
+    });
     try {
-      repository.save(newUser);
+      message = "The user was created successfully";
+      repository.save(newUser); 
     } catch (Exception e) {
-      throw new UserNotCreatedException(newUser.getEmail());
+      throw new UserNotCreatedException(newUser.getEmail(), "unable to save user");
     }
-    return "The user was created successfully";
+    return message;
   }
 
   @GetMapping("/user/{email}")
@@ -54,31 +61,42 @@ class UserController {
   @PutMapping("/user/{email}")
   String updateAUser(@RequestBody User newUser, @PathVariable String email) {
     if (!newUser.containsRequired()) {
-      throw new UserNotValidException(email);
+      throw new UserNotUpdatedException(email, "user is not valid");
     }
+    message = "";
     repository.findById(email)
-      .map(user -> {
-        if (user.validateUser(newUser)) {
+    .map(user -> {
+      if (user.validateUser(newUser)) {
+        try {
+          repository.deleteById(email);
           user.updateUser(newUser);
-          user.setEmail(email);
-          try {
-            repository.save(user);
-          } catch (Exception e) {
-            throw new UserNotUpdatedException(user.getEmail());
-          }
+          repository.save(user);
+          message = "The user was updated successfully";
+        } catch (Exception e) {
+          throw new UserNotUpdatedException(user.getEmail(), "unable to update user");
         }
-        throw new UserNotValidException(email);
-      });
-      return "The user was updated successfully";
+        return user;
+      }
+      throw new UserNotUpdatedException(email, "user is not valid");
+    })
+    .orElseThrow(() -> new UserNotUpdatedException(email, "user does not exist"));
+    return message;
   }
 
   @DeleteMapping("/user/{email}")
   String deleteUser(@PathVariable String email) {
+    message = "";
+    repository.findById(email)
+    .map(user -> {
+      return user;
+    })
+    .orElseThrow(() -> new UserNotDeletedException(email, "user does not exist"));
     try {
       repository.deleteById(email);
+      message = "The user was deleted successfully";
     } catch (Exception e) {
-      throw new UserNotDeletedException(email);
+      throw new UserNotDeletedException(email, "something went wrong when deleting user");
     }
-    return "The user was deleted successfully";
+    return message;
   }
 }

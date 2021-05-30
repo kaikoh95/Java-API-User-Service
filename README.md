@@ -1,5 +1,6 @@
-# Java-API-User-Service
-A service for creating, retrieving, updating, and deleting users as an assessment for Vector and for my own practice in Java.
+# User-Service-API
+An API service for creating, retrieving, updating, and deleting users as an assessment for Vector and for my own practice in Java.
+Built with Maven, Spring Boot.
 
 ## Local Setup
 

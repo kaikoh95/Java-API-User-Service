@@ -156,8 +156,24 @@ public class User {
   public HashMap<String, String> updateUser(User newUser) {
     for (Map.Entry<String,String> entry : newUser.userMap().entrySet()) {
       String key = entry.getKey(); 
+      String value = entry.getValue();
       if (this.userMap().containsKey(key)) {
-        this.userMap().put(key, entry.getValue());
+        this.userMap().put(key, value);
+        switch (key) {
+          case "email": 
+            this.setEmail(value);
+            break;
+          case "password": 
+            this.setPassword(value);
+            break;
+          case "firstName": 
+            this.setFirstName(value);
+            break;
+          case "lastName": 
+            this.setLastName(value);
+            break;
+          default: break;
+        }
       }
     }
     return this.userMap();
