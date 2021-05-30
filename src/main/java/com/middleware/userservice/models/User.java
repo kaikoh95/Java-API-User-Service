@@ -42,26 +42,43 @@ public class User {
     return string;
   }
 
-  /**
-   * Gets Email of User in the JPA provider.
-   * @return string
-   */
   public String getEmail() {
     return this.email;
   }
 
-  /**
-   * Sets Email of User.
-   */
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public String getPassword() {
+    return this.password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getFirstName() {
+    return this.firstName;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return this.lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   /**
    * Obtains current user model information.
    * @return a map object containing user data.
    */
-  public HashMap<String, String> getUser() {
+  public HashMap<String, String> userMap() {
     HashMap<String, String> userObj = new HashMap<String, String>();
     userObj.put("email", this.email);
     userObj.put("password", this.password);
@@ -74,7 +91,7 @@ public class User {
    * Obtains required fields for user model
    * @return an array of string
    */
-  public ArrayList<String> getRequiredFields() {
+  public ArrayList<String> userRequiredFields() {
     ArrayList<String> requiredFields = new ArrayList<String>(){
       {
         add("email");
@@ -89,8 +106,8 @@ public class User {
    * @return a string value corresponding to user key or false.
    */
   public String getUserValue(String key) {
-    if (this.getUser().containsKey(key)) {
-      return this.getUser().get(key);
+    if (this.userMap().containsKey(key)) {
+      return this.userMap().get(key);
     }
     return "";
   }
@@ -101,13 +118,13 @@ public class User {
    */
   public Boolean containsRequired() {
     Integer count = 0;
-    for (Map.Entry<String,String> entry : this.getUser().entrySet()) {
+    for (Map.Entry<String,String> entry : this.userMap().entrySet()) {
       String key = entry.getKey(); 
-      if (this.getRequiredFields().contains(key)) {
+      if (this.userRequiredFields().contains(key)) {
         count++;
       }
     }
-    return count >= this.getRequiredFields().size();
+    return count >= this.userRequiredFields().size();
   }
 
   /**
@@ -119,9 +136,9 @@ public class User {
    */
   public Boolean validateUser(User newUser) {
     Boolean valid = true;
-    for (Map.Entry<String,String> entry : newUser.getUser().entrySet()) {
+    for (Map.Entry<String,String> entry : newUser.userMap().entrySet()) {
       String key = entry.getKey(); 
-      if (!this.getUser().containsKey(key)) {
+      if (!this.userMap().containsKey(key)) {
         valid = false;
         break;
       }
@@ -137,13 +154,13 @@ public class User {
    * @return a boolean on whether the update is valid or not.
    */
   public HashMap<String, String> updateUser(User newUser) {
-    for (Map.Entry<String,String> entry : newUser.getUser().entrySet()) {
+    for (Map.Entry<String,String> entry : newUser.userMap().entrySet()) {
       String key = entry.getKey(); 
-      if (this.getUser().containsKey(key)) {
-        this.getUser().put(key, entry.getValue());
+      if (this.userMap().containsKey(key)) {
+        this.userMap().put(key, entry.getValue());
       }
     }
-    return this.getUser();
+    return this.userMap();
   }
 
 }

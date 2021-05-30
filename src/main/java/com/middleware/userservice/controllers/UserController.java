@@ -38,18 +38,17 @@ class UserController {
     }
     try {
       repository.save(newUser);
-      return "The user was created successfully";
     } catch (Exception e) {
       throw new UserNotCreatedException(newUser.getEmail());
     }
+    return "The user was created successfully";
   }
 
   @GetMapping("/user/{email}")
-  String getUser(@PathVariable String email) {
-    
+  User getUser(@PathVariable String email) {
     User user = repository.findById(email)
       .orElseThrow(() -> new UserNotFoundException(email));
-    return user.toString();
+    return user;
   }
 
   @PutMapping("/user/{email}")
