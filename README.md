@@ -16,8 +16,18 @@ You can use Postman for testing.
 
 API methods are based on the OpenAPI spec provided.
 
-## Notes (as of 27 May 2021 0830)
+## Notes 
+
+### 31 May 2021 1210
+
+- Fixed null issues on fields
+
+- Updated error handlers with more detailed messages
+
+### 27 May 2021 0830
+
+- Implemented User REST API Service
 
 - To add unit tests
 
-- Fix null issues on fields other than email
+- To fix null issues on fields other than email
