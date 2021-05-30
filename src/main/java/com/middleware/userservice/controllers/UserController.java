@@ -37,7 +37,6 @@ class UserController {
       throw new UserNotValidException(newUser.getEmail());
     }
     try {
-      System.out.println(newUser);
       repository.save(newUser);
       return "The user was created successfully";
     } catch (Exception e) {
@@ -58,8 +57,7 @@ class UserController {
     if (!newUser.containsRequired()) {
       throw new UserNotValidException(email);
     }
-    String response = "";
-    response = repository.findById(email)
+    repository.findById(email)
       .map(user -> {
         if (user.validateUser(newUser)) {
           user.updateUser(newUser);
@@ -69,11 +67,10 @@ class UserController {
           } catch (Exception e) {
             throw new UserNotUpdatedException(user.getEmail());
           }
-          return "The user was updated successfully";
         }
         throw new UserNotValidException(email);
       });
-      return response;
+      return "The user was updated successfully";
   }
 
   @DeleteMapping("/user/{email}")
